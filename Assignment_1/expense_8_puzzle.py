@@ -37,32 +37,34 @@ def a_star(start, goal, flag):
 if __name__ == "__main__":
     if len(sys.argv) != 4 and len(sys.argv) != 5 and len(sys.argv) != 3:
         print("Usage: expense_8_puzzle.py <start-file> <goal-file> <method> <dump-flag>")
-    elif len(sys.argv) == 4:                         #3 flags = no dump flag
-        start_file = sys.argv[1]
-        goal_file = sys.argv[2]
-        method = sys.argv[3]
-        dflag = False
-    elif len(sys.argv) == 5:                         #4 flags = dump flag
-        start_file = sys.argv[1]
-        goal_file = sys.argv[2]
-        method = sys.argv[3]
-        dflag = sys.argv[len(sys.argv)-1]
-    elif len(sys.argv) == 3:
-        start_file = sys.argv[1]
-        goal_file = sys.argv[2]
-        method = "a*"
-        dflag = False
-    
-    with open(start_file, 'r') as file:
-        start = file.readlines()
-        start = [start.split() for start in start]  #splitting start contents by each character instead of each line
-    with open(goal_file, 'r') as file:
-         goal = file.readlines()
-         goal = [goal.split() for goal in goal]     #splitting goal contents by each character instead of each line
-    
-    #turning the start & goal lists into matrices
-    start = np.matrix(start)
-    goal = np.matrix(goal)
 
-    main(method)
+    else:
+        if len(sys.argv) == 4:                         #3 flags = no dump flag
+            start_file = sys.argv[1]
+            goal_file = sys.argv[2]
+            method = sys.argv[3]
+            dflag = False
+        elif len(sys.argv) == 5:                         #4 flags = dump flag
+            start_file = sys.argv[1]
+            goal_file = sys.argv[2]
+            method = sys.argv[3]
+            dflag = sys.argv[len(sys.argv)-1]
+        elif len(sys.argv) == 3:
+            start_file = sys.argv[1]
+            goal_file = sys.argv[2]
+            method = "a*"
+            dflag = False
+        
+        with open(start_file, 'r') as file:
+            start = file.readlines()
+            start = [start.split() for start in start]  #splitting start contents by each character instead of each line
+        with open(goal_file, 'r') as file:
+            goal = file.readlines()
+            goal = [goal.split() for goal in goal]     #splitting goal contents by each character instead of each line
+        
+        #turning the start & goal lists into matrices
+        start = np.matrix(start)
+        goal = np.matrix(goal)
+
+        main(method)
     
