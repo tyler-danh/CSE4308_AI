@@ -2,6 +2,7 @@ import sys
 import numpy as np
 from collections import deque
 import datetime
+from Node import node
 
 def main(method): #here using method to decide which search method to invoke
     if method == "bfs":         #breadth first search
@@ -18,16 +19,37 @@ def main(method): #here using method to decide which search method to invoke
 
 def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implement a queue
     print("this is bfs")
-    #for BFS i will start at whichever node is 0
+    if dflag == True:
+        file = open(dfilename, 'a')
+    #for BFS i will start at whichever node is in [0,0]
     #cant use a for loop to search through matrix because i am using numpy
-    zindex = np.where(start == 0)
-    for i, j in zip(zindex[0], zindex[1]):
-        zindex = (i,j)        
-    """note from work on 9/3/24:
-    make your own queue
-    start where 0 is, look for neighbors to 0
-    then generate new matrices(states) and run them
-    through the similarity function that also needs to be completed."""
+    queue = deque([node(start, 0, start[0,0], 0)])
+    visted = set()
+    popped = 0
+    expanded = 0 
+    tcost = 0
+    depth = 0
+    fringe = [] 
+    steps = []
+    while queue:
+        current_node = queue.popleft()
+        if np.array_equal(current_node.state, goal):
+            if dflag == True:
+                print(f"Goal found: state = {current_node.state}", file=file)
+                print(f"Nodes popped: {popped}", file=file)
+                print(f"Nodes expanded: {expanded}", file=file)
+                print(f"Max fringe size: {len(fringe)}", file=file)
+                file.close()
+            print(f"Goal found: state = {current_node.state}")
+            print(f"Nodes popped: {popped}")
+            print(f"Nodes expanded: {expanded}")
+            print(f"Max fringe size: {len(fringe)}")
+            print(f"Solution found at depth {depth} with cost {tcost}")
+            for i in range(len(steps)):
+                print(f"\t{steps[i]}")
+            return 0
+        for moves in [(-1, 0), (1, 0), (0, -1), (0, 1)]: #down, up, left, right
+            fringe.append([])
 
     if np.array_equal(start, goal):
         return 0
