@@ -29,9 +29,12 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
     popped = 0
     expanded = 0 
     depth = 0
+    lcounter = 0
     fringe = [] 
     steps = []
     while queue:
+        lcounter += 1
+        print(f"\rLoop: {lcounter}", end='')
         current_node = queue.popleft()
         depth += 1
         popped += 1
@@ -40,56 +43,64 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
                 print(f"Goal found: state = {current_node.state}", file=file)
                 print(f"Nodes popped: {popped}", file=file)
                 print(f"Nodes expanded: {expanded}", file=file)
-                print(f"Max fringe size: {len(fringe)}", file=file)
-                print(f"Goal found: state = {current_node.state}", file=file)
-                print(f"Nodes popped: {popped}", file=file)
-                print(f"Nodes expanded: {expanded}", file=file)
-                print(f"Max fringe size: {len(fringe)}", file=file)
+                print(f"Max fringe size: {qsize}", file=file)
                 print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
+                print(len(f"# of steps: {steps}"))
                 file.close()
-            print(f"Goal found: state = {current_node.state}")
+            print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
-            print(f"Max fringe size: {len(fringe)}")
+            print(f"Max fringe size: {qsize}")
             print(f"Solution found at depth {depth} with cost {current_node.cost}")
             for i in range(len(steps)):
                 print(f"\t{steps[i]}")
             return 0
-        for i in range(9):
-            index = np.where(current_node.state == 0)
-            for i, j in zip(index[0], index[0]):
-                blank = (i,j)
         for x,y in [(-1, 0), (1, 0), (0, -1), (0, 1)]: #down, up, left, right, this should expand more states(nodes)
+            for i in range(9):
+                index = np.where(current_node.state == 0)
+                for i, j in zip(index[0], index[1]):
+                    blank = (i,j)
             new_x = blank[0] + x
             new_y = blank[1] + y
             if 0 <= new_x < 3 and 0 <= new_y < 3:
+                expanded += 1
                 new_state = copy.deepcopy(current_node.state)
                 new_state[blank[0]][blank[1]] = new_state[new_x][new_y]
                 Node_cost = new_state[new_x][new_y]         #because im using a copy of current_node i have to first save the cost then append it
                 new_cost = current_node.cost + Node_cost    #cost does not matter in BFS
                 new_state[new_x][new_y] = 0                 #moving the blank
                 new_node = node(copy.deepcopy(new_state), current_node, new_cost, 0)
-                fringe.append(copy.deepcopy(new_state))
-                if dflag == True:
-                    print(f"Fringe = {fringe}", file = file)
+                
                 if tuple(new_state.flatten()) not in visited:
+                    qsize = len(queue)
                     visited.add(tuple(new_state.flatten()))
                     queue.append(new_node)
-                    expanded += 1
+                    if dflag == True:
+                        fringe.append(copy.deepcopy(new_state))
+                        print(f"Fringe = {fringe}", file=file)
                     if x == -1:
-                        steps.append(f"move {new_state[new_x][new_y]} up")
+                        steps.append(f"move {new_state[blank[0]][blank[1]]} down")
                     elif x == 1:
-                        steps.append(f"move {new_state[new_x][new_y]} down")
+                        steps.append(f"move {new_state[blank[0]][blank[1]]} up")
                     elif y == -1:
-                        steps.append(f"move {new_state[new_x][new_y]} right")
+                        steps.append(f"move {new_state[blank[0]][blank[1]]} right")
                     elif y == 1:
-                        steps.append(f"move {new_state[new_x][new_y]} left")    
-    print("No solution found")
+                        steps.append(f"move {new_state[blank[0]][blank[1]]} left")
+                else:
+                    steps.pop()    
+    print("NO SOLUTION FOUND")
+    print(f"Nodes popped: {popped}")
+    print(f"Nodes expanded: {expanded}")
+    print(f"Max fringe size: {qsize}")
+    for i in range(len(steps)):
+        print(steps[i])
     if dflag == True:
         print("NO SOLUTION FOUND", file=file)
         print(f"Nodes popped: {popped}", file=file)
         print(f"Nodes expanded: {expanded}", file=file)
-        print(f"Max fringe size: {len(fringe)}", file=file)
+        print(f"Max fringe size: {qsize}", file=file)
+        file.close()
+
     return 1
     
 def ucs(start, goal, flag):
