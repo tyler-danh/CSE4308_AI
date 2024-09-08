@@ -20,8 +20,6 @@ def main(method): #here using method to decide which search method to invoke
 
 def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implement a queue
     print("this is bfs")
-    if dflag == True:
-        file = open(dfilename, 'a')
     #for BFS i will start at whichever node is in [0,0]
     #cant use a for loop to search through matrix because i am using numpy
     queue = deque([node(start, 0, start[0,0], 0)]) #queue is our fringe here but will still use fringe for dump file purposes
@@ -40,13 +38,13 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
         popped += 1
         if np.array_equal(current_node.state, goal):
             if dflag == True:
-                print(f"Goal found: state = {current_node.state}", file=file)
-                print(f"Nodes popped: {popped}", file=file)
-                print(f"Nodes expanded: {expanded}", file=file)
-                print(f"Max fringe size: {qsize}", file=file)
-                print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
-                print(len(f"# of steps: {steps}"))
-                file.close()
+                with open(dfilename, "a") as file:
+                    print(f"Goal found: state = {current_node.state}", file=file)
+                    print(f"Nodes popped: {popped}", file=file)
+                    print(f"Nodes expanded: {expanded}", file=file)
+                    print(f"Max fringe size: {qsize}", file=file)
+                    print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
+                    print(f"# of steps: {len(steps)}", file=file)
             print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
@@ -76,8 +74,9 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
                     visited.add(tuple(new_state.flatten()))
                     queue.append(new_node)
                     if dflag == True:
-                        fringe.append(copy.deepcopy(new_state))
-                        print(f"Fringe = {fringe}", file=file)
+                        with open(dfilename, "a") as file:
+                            fringe.append(copy.deepcopy(new_state))
+                            print(f"Fringe = {fringe}", file=file)
                     if x == -1:
                         steps.append(f"move {new_state[blank[0]][blank[1]]} down")
                     elif x == 1:
@@ -95,12 +94,11 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
     for i in range(len(steps)):
         print(steps[i])
     if dflag == True:
-        print("NO SOLUTION FOUND", file=file)
-        print(f"Nodes popped: {popped}", file=file)
-        print(f"Nodes expanded: {expanded}", file=file)
-        print(f"Max fringe size: {qsize}", file=file)
-        file.close()
-
+        with open(dfilename, "a") as file:
+            print("NO SOLUTION FOUND", file=file)
+            print(f"Nodes popped: {popped}", file=file)
+            print(f"Nodes expanded: {expanded}", file=file)
+            print(f"Max fringe size: {qsize}", file=file)
     return 1
     
 def ucs(start, goal, flag):
