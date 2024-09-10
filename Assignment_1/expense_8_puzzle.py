@@ -30,6 +30,7 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
     lcounter = 0
     fringe = [] 
     steps = []
+    state_step = {} #map each state to its step performed for path reconstruction
     while queue:
         lcounter += 1
         print(f"\rLoop: {lcounter}", end='')
@@ -37,6 +38,7 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
         depth += 1
         popped += 1
         if np.array_equal(current_node.state, goal):
+            path = path_reconstruction(current_node, state_step)
             if dflag == True:
                 with open(dfilename, "a") as file:
                     print(f"Goal found: state = {current_node.state}", file=file)
@@ -44,14 +46,14 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
                     print(f"Nodes expanded: {expanded}", file=file)
                     print(f"Max fringe size: {qsize}", file=file)
                     print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
-                    print(f"# of steps: {len(steps)}", file=file)
+                    print(f"# of steps: {len(path)}", file=file)
             print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
             print(f"Max fringe size: {qsize}")
             print(f"Solution found at depth {depth} with cost {current_node.cost}")
-            for i in range(len(steps)):
-                print(f"\t{steps[i]}")
+            for i in range(len(path)):
+                print(f"\t{path[i]}")
             return 0
         for x,y in [(-1, 0), (1, 0), (0, -1), (0, 1)]: #down, up, left, right, this should expand more states(nodes)
             for i in range(9):
@@ -78,21 +80,20 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
                             fringe.append(copy.deepcopy(new_state))
                             print(f"Fringe = {fringe}", file=file)
                     if x == -1:
-                        steps.append(f"move {new_state[blank[0]][blank[1]]} down")
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} down"
                     elif x == 1:
-                        steps.append(f"move {new_state[blank[0]][blank[1]]} up")
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} up"
                     elif y == -1:
-                        steps.append(f"move {new_state[blank[0]][blank[1]]} right")
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} right"
                     elif y == 1:
-                        steps.append(f"move {new_state[blank[0]][blank[1]]} left")
-                else:
-                    steps.pop()    
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} left"   
     print("NO SOLUTION FOUND")
     print(f"Nodes popped: {popped}")
     print(f"Nodes expanded: {expanded}")
     print(f"Max fringe size: {qsize}")
-    for i in range(len(steps)):
-        print(steps[i])
+    path = path_reconstruction(current_node, state_step)
+    for i in range(len(path)):
+        print(f"\t{path[i]}")
     if dflag == True:
         with open(dfilename, "a") as file:
             print("NO SOLUTION FOUND", file=file)
@@ -236,17 +237,12 @@ def a_star(start, goal, flag):
     if np.array_equal(start, goal):
         return 0
     
-def similarity(state, goal):
-    """here i will check for similarity of each state that is generated
-    by subtracting the node from in the state from the node in the 
-    goal matrix then doing a summation of the subtractions. 0 means the spot is the same.
-    we will try to choose the lowest return value of the states generated."""
-    nodes = []
-    for i in range(9):
-        index = np.where(state == i)
-        for i, j in zip(index[0], index[0]):
-            node = (i,j)
-            nodes.append(node)
+def path_reconstruction(current_goal_node, state_step_map):
+    reconstructed_path = []
+    while current_goal_node.parent != 0:
+        reconstructed_path.insert(0, state_step_map[tuple(current_goal_node.state.flatten())])
+        current_goal_node = current_goal_node.parent
+    return reconstructed_path
     
 
 if __name__ == "__main__":
