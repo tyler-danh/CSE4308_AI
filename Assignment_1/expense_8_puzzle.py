@@ -23,7 +23,7 @@ def bfs(start, goal, flag): #bfs's fringe is a FIFO so i should try and implemen
     print("this is bfs")
     #for BFS i will start at whichever node is in [0,0]
     #cant use a for loop to search through matrix because i am using numpy
-    queue = deque([node(start, 0, start[0,0], 0)]) #queue is our fringe here but will still use fringe for dump file purposes
+    queue = deque([node(start, 0, 0, 0)]) #queue is our fringe here but will still use fringe for dump file purposes
     visited = set()
     popped = 0
     expanded = 0 
@@ -108,7 +108,9 @@ def ucs(start, goal, flag):
     print("this is ucs")
     #for UCS i will start at whichever node is in [0,0]
     #cant use a for loop to search through matrix because i am using numpy
-    queue = deque([node(start, 0, start[0,0], 0)]) #queue is our fringe here but will still use fringe for dump file purposes
+    heap = [(0, 0,node(start, 0, 0, 0))]    #making a heap queue which is a priority queue that automatically sorts smallest to largest usage: cost, node#, node
+    heapq.heapify(heap)                     #making sure the heap is a valid heap
+    qsize = len(heap)
     visited = set()
     popped = 0
     expanded = 0 
@@ -117,11 +119,12 @@ def ucs(start, goal, flag):
     fringe = [] 
     state_step = {} #map each state to its step performed for path reconstruction
     visited.add(tuple(start.flatten()))
-    while queue:
+    while heap:
         successor_counter = 0
         lcounter += 1
         print(f"\rLoop: {lcounter}", end='')
-        current_node = queue.popleft()
+        current_node_tuple = heapq.heappop(heap)
+        _, _, current_node = current_node_tuple
         depth += 1
         popped += 1
         if np.array_equal(current_node.state, goal):
@@ -160,10 +163,10 @@ def ucs(start, goal, flag):
                 new_node = node(copy.deepcopy(new_state), current_node, new_cost, 0)
                 
                 if tuple(new_state.flatten()) not in visited:
-                    qsize = len(queue)
                     visited.add(tuple(new_state.flatten()))
-                    queue.append(new_node)
+                    heapq.heappush(heap, (new_cost, expanded, new_node))
                     fringe.append(copy.deepcopy(new_node.state))
+                    qsize = len(heap)
                     if x == -1:
                         state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} down"
                     elif x == 1:
