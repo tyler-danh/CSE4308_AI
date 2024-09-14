@@ -15,9 +15,8 @@ def main(method): #here using method to decide which search method to invoke
         greedy(start, goal, dflag)
     elif method == "a*":        #A* search
         a_star(start, goal, dflag)
-    else:                       #DEFULT TO A*
+    else:                       #DEFAULT TO A*
         a_star(start, goal, dflag)
-
 
 def bfs(start, goal, dflag): #bfs's fringe is a FIFO so i should try and implement a queue
     print("this is bfs")
@@ -46,14 +45,14 @@ def bfs(start, goal, dflag): #bfs's fringe is a FIFO so i should try and impleme
                     print(f"Goal found: state = {current_node.state}", file=file)
                     print(f"Nodes popped: {popped}", file=file)
                     print(f"Nodes expanded: {expanded}", file=file)
-                    print(f"Max fringe size: {qsize}", file=file)
-                    print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
+                    print(f"Max fringe size: {len(queue)}", file=file)
+                    print(f"Solution found at depth {len(path)} with cost {current_node.cost}", file=file)
                     print(f"# of steps: {len(path)}", file=file)
             print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
-            print(f"Max fringe size: {qsize}")
-            print(f"Solution found at depth {depth} with cost {current_node.cost}")
+            print(f"Max fringe size: {len(queue)}")
+            print(f"Solution found at depth {len(path)} with cost {current_node.cost}")
             for i in range(len(path)):
                 print(f"\t{path[i]}")
             return 0
@@ -75,7 +74,6 @@ def bfs(start, goal, dflag): #bfs's fringe is a FIFO so i should try and impleme
                 new_node = node(copy.deepcopy(new_state), current_node, new_cost, 0)
                 
                 if tuple(new_state.flatten()) not in visited:
-                    qsize = len(queue)
                     visited.add(tuple(new_state.flatten()))
                     queue.append(new_node)
                     fringe.append(copy.deepcopy(new_node.state))
@@ -97,13 +95,13 @@ def bfs(start, goal, dflag): #bfs's fringe is a FIFO so i should try and impleme
     print("\nNO SOLUTION FOUND")
     print(f"Nodes popped: {popped}")
     print(f"Nodes expanded: {expanded}")
-    print(f"Max fringe size: {qsize}")
+    print(f"Max fringe size: {len(queue)}")
     if dflag == True:
         with open(dfilename, "a") as file:
             print("NO SOLUTION FOUND", file=file)
             print(f"Nodes popped: {popped}", file=file)
             print(f"Nodes expanded: {expanded}", file=file)
-            print(f"Max fringe size: {qsize}", file=file)
+            print(f"Max fringe size: {len(queue)}", file=file)
     return 1
     
 def ucs(start, goal, dflag):
@@ -114,7 +112,6 @@ def ucs(start, goal, dflag):
     #for some reason __lt__ doesn't work when trying to use the heap so node# is the workaround to ensure that in the event
     #of two nodes having the same cost/heuristic there is still a way to differentiate them.
     heapq.heapify(heap)                     #making sure the heap is a valid heap
-    qsize = len(heap)
     visited = set()
     popped = 0
     expanded = 0 
@@ -138,14 +135,14 @@ def ucs(start, goal, dflag):
                     print(f"Goal found: state = {current_node.state}", file=file)
                     print(f"Nodes popped: {popped}", file=file)
                     print(f"Nodes expanded: {expanded}", file=file)
-                    print(f"Max fringe size: {qsize}", file=file)
-                    print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
+                    print(f"Max fringe size: {len(fringe)}", file=file)
+                    print(f"Solution found at depth {len(path)} with cost {current_node.cost}", file=file)
                     print(f"# of steps: {len(path)}", file=file)
             print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
-            print(f"Max fringe size: {qsize}")
-            print(f"Solution found at depth {depth} with cost {current_node.cost}")
+            print(f"Max fringe size: {len(fringe)}")
+            print(f"Solution found at depth {len(path)} with cost {current_node.cost}")
             for i in range(len(path)):
                 print(f"\t{path[i]}")
             return 0
@@ -170,7 +167,6 @@ def ucs(start, goal, dflag):
                     visited.add(tuple(new_state.flatten()))
                     heapq.heappush(heap, (new_cost, expanded, new_node)) #add the cost, node#, node to heap
                     fringe.append(copy.deepcopy(new_node.state))
-                    qsize = len(heap)
                     if x == -1:
                         state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} down"
                     elif x == 1:
@@ -189,13 +185,13 @@ def ucs(start, goal, dflag):
     print("\nNO SOLUTION FOUND")
     print(f"Nodes popped: {popped}")
     print(f"Nodes expanded: {expanded}")
-    print(f"Max fringe size: {qsize}")
+    print(f"Max fringe size: {len(fringe)}")
     if dflag == True:
         with open(dfilename, "a") as file:
             print("NO SOLUTION FOUND", file=file)
             print(f"Nodes popped: {popped}", file=file)
             print(f"Nodes expanded: {expanded}", file=file)
-            print(f"Max fringe size: {qsize}", file=file)
+            print(f"Max fringe size: {len(fringe)}", file=file)
     return 1
 
 def greedy(start, goal, dflag):
@@ -207,7 +203,6 @@ def greedy(start, goal, dflag):
     #for some reason __lt__ doesn't work when trying to use the heap so node# is the workaround to ensure that in the event
     #of two nodes having the same cost/heuristic there is still a way to differentiate them.
     heapq.heapify(heap)                     #making sure the heap is a valid heap
-    qsize = len(heap)
     visited = set()
     popped = 0
     expanded = 0 
@@ -222,7 +217,6 @@ def greedy(start, goal, dflag):
         print(f"\rLoop: {lcounter}", end='')
         current_node_tuple = heapq.heappop(heap)
         _, _, current_node = current_node_tuple
-        heap = [] #empty the heap because we dont care once we expand the node with the smallest heuristic
         depth += 1
         popped += 1
         if np.array_equal(current_node.state, goal):
@@ -232,14 +226,14 @@ def greedy(start, goal, dflag):
                     print(f"Goal found: state = {current_node.state}", file=file)
                     print(f"Nodes popped: {popped}", file=file)
                     print(f"Nodes expanded: {expanded}", file=file)
-                    print(f"Max fringe size: {qsize}", file=file)
+                    print(f"Max fringe size: {len(fringe)}", file=file)
                     print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
                     print(f"# of steps: {len(path)}", file=file)
             print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
-            print(f"Max fringe size: {qsize}")
-            print(f"Solution found at depth {depth} with cost {current_node.cost}")
+            print(f"Max fringe size: {len(fringe)}")
+            print(f"Solution found at depth {len(path)} with cost {current_node.cost}")
             for i in range(len(path)):
                 print(f"\t{path[i]}")
             return 0
@@ -258,14 +252,13 @@ def greedy(start, goal, dflag):
                 Node_cost = new_state[new_x][new_y]         #because im using a copy of current_node i have to first save the cost then append it
                 new_cost = current_node.cost + Node_cost    #cost does not matter in greedy, we're looking at heuristic
                 new_state[new_x][new_y] = 0                 #moving the blank
-                heuristic = get_heuristic(new_state, goal)  #calculate new heuristic if the node meets the conditions
-                new_node = node(copy.deepcopy(new_state), current_node, new_cost, heuristic)
                 
                 if tuple(new_state.flatten()) not in visited:
+                    heuristic = get_heuristic(new_state, goal)  #calculate new heuristic if the node meets the conditions
+                    new_node = node(copy.deepcopy(new_state), current_node, new_cost, heuristic)
                     visited.add(tuple(new_state.flatten()))
                     heapq.heappush(heap, (heuristic, expanded, new_node))
                     fringe.append(copy.deepcopy(new_node.state))
-                    qsize = len(heap)
                     if x == -1:
                         state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} down"
                     elif x == 1:
@@ -283,52 +276,109 @@ def greedy(start, goal, dflag):
     print("\nNO SOLUTION FOUND")
     print(f"Nodes popped: {popped}")
     print(f"Nodes expanded: {expanded}")
-    print(f"Max fringe size: {qsize}")
+    print(f"Max fringe size: {len(fringe)}")
     if dflag == True:
         with open(dfilename, "a") as file:
             print("NO SOLUTION FOUND", file=file)
             print(f"Nodes popped: {popped}", file=file)
             print(f"Nodes expanded: {expanded}", file=file)
-            print(f"Max fringe size: {qsize}", file=file)
+            print(f"Max fringe size: {len(fringe)}", file=file)
     return 1
 
 def a_star(start, goal, flag):
-    print("this is a_star")
-    if dflag == True:
-        file = open(dfilename, 'a')
+    print("this is a*")
+    #for A* i will use heuristic based on the # of mismatched tiles and add the node cost
     #cant use a for loop to search through matrix because i am using numpy
+    heuristic = get_heuristic(start, goal) #nothing added so far because the start cost is 0
+    heap = [(heuristic, 0, node(start, 0, 0, heuristic))] #no need to add anything to heuristic here because cost = 0
+    #making a heap queue which is a priority queue that automatically sorts smallest to largest usage: heuristic, node#, node
+    #for some reason __lt__ doesn't work when trying to use the heap so node# is the workaround to ensure that in the event
+    #of two nodes having the same cost/heuristic there is still a way to differentiate them.
     visited = set()
     popped = 0
     expanded = 0 
     depth = 0
+    lcounter = 0
     fringe = [] 
-    steps = []
-    while queue:
-        current_node = queue.popleft()
+    #map each state to its step performed for path reconstruction
+    state_step = {}
+    visited.add(tuple(start.flatten()))
+    while heap:
+        successor_counter = 0
+        lcounter += 1
+        print(f"\rLoop: {lcounter}", end='')
+        current_node_tuple = heapq.heappop(heap)
+        _, _, current_node = current_node_tuple
         depth += 1
         popped += 1
         if np.array_equal(current_node.state, goal):
+            path = path_reconstruction(current_node, state_step)
             if dflag == True:
-                print(f"Goal found: state = {current_node.state}", file=file)
-                print(f"Nodes popped: {popped}", file=file)
-                print(f"Nodes expanded: {expanded}", file=file)
-                print(f"Max fringe size: {len(fringe)}", file=file)
-                print(f"Goal found: state = {current_node.state}", file=file)
-                print(f"Nodes popped: {popped}", file=file)
-                print(f"Nodes expanded: {expanded}", file=file)
-                print(f"Max fringe size: {len(fringe)}", file=file)
-                print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
-                file.close()
-            print(f"Goal found: state = {current_node.state}")
+                with open(dfilename, "a") as file:
+                    print(f"Goal found: state = {current_node.state}", file=file)
+                    print(f"Nodes popped: {popped}", file=file)
+                    print(f"Nodes expanded: {expanded}", file=file)
+                    print(f"Max fringe size: {len(fringe)}", file=file)
+                    print(f"Solution found at depth {depth} with cost {current_node.cost}", file=file)
+                    print(f"# of steps: {len(path)}", file=file)
+            print(f"\nGOAL FOUND: state = {current_node.state}")
             print(f"Nodes popped: {popped}")
             print(f"Nodes expanded: {expanded}")
             print(f"Max fringe size: {len(fringe)}")
-            print(f"Solution found at depth {depth} with cost {current_node.cost}")
-            for i in range(len(steps)):
-                print(f"\t{steps[i]}")
+            print(f"Solution found at depth {len(path)} with cost {current_node.cost}")
+            for i in range(len(path)):
+                print(f"\t{path[i]}")
             return 0
-    if np.array_equal(start, goal):
-        return 0
+        for x,y in [(-1, 0), (1, 0), (0, -1), (0, 1)]: #down, up, left, right, this should expand more states(nodes)
+            for i in range(9):
+                index = np.where(current_node.state == 0)
+                for i, j in zip(index[0], index[1]):
+                    blank = (i,j)
+            new_x = blank[0] + x
+            new_y = blank[1] + y
+            if 0 <= new_x < 3 and 0 <= new_y < 3:
+                successor_counter += 1
+                expanded += 1
+                new_state = copy.deepcopy(current_node.state)
+                new_state[blank[0]][blank[1]] = new_state[new_x][new_y]
+                Node_cost = new_state[new_x][new_y]         #because im using a copy of current_node i have to first save the cost then append it
+                new_cost = current_node.cost + Node_cost    #cost does matter in A*, we're ALSO looking at heuristic
+                new_state[new_x][new_y] = 0                 #moving the blank
+                heuristic = get_heuristic(new_state, goal)  #calculate new heuristic if the node meets the conditions
+                new_node = node(copy.deepcopy(new_state), current_node, new_cost, heuristic)
+                
+                if tuple(new_state.flatten()) not in visited:
+                    visited.add(tuple(new_state.flatten()))
+                    heapq.heappush(heap, (heuristic + new_cost, expanded, new_node))
+                    fringe.append(copy.deepcopy(new_node.state))
+                    #filling in the state_step
+                    if x == -1:
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} down"
+                    elif x == 1:
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} up"
+                    elif y == -1:
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} right"
+                    elif y == 1:
+                        state_step[tuple(new_state.flatten())] = f"move {new_state[blank[0]][blank[1]]} left"
+                    #output to file for each successor that goes into the heap
+                    if dflag == True:
+                        with open(dfilename, "a") as file:
+                            print(f"{successor_counter} successors generated", file=file)
+                            print(f"Closed: {visited}", file=file) 
+                            print(f"Fringe: {fringe}", file=file)
+                            print(f"Action: {state_step[tuple(new_state.flatten())]}", file=file)
+    #no solution found outputs here
+    print("\nNO SOLUTION FOUND")
+    print(f"Nodes popped: {popped}")
+    print(f"Nodes expanded: {expanded}")
+    print(f"Max fringe size: {len(fringe)}")
+    if dflag == True:
+        with open(dfilename, "a") as file:
+            print("NO SOLUTION FOUND", file=file)
+            print(f"Nodes popped: {popped}", file=file)
+            print(f"Nodes expanded: {expanded}", file=file)
+            print(f"Max fringe size: {len(fringe)}", file=file)
+    return 1
     
 def path_reconstruction(current_goal_node, state_step_map):
     reconstructed_path = []
@@ -338,14 +388,16 @@ def path_reconstruction(current_goal_node, state_step_map):
     return reconstructed_path
 
 def get_heuristic(current_state, goal): #calculating simple heuristic based on the # of misplaced tiles
-    misplaced_tiles = 0
-    for index, current_state_node in np.ndenumerate(current_state): #have to enumerate otherwise type error is raised
-        goal_node = goal[index]
-        if current_state_node != goal_node:
-            misplaced_tiles += 1
-    return misplaced_tiles
+    manhattan_distance = 0
+    for i in range(3):
+        for j in range(3):
+            current_value = current_state[i][j]
+            for goal_x in range(3):
+                for goal_y in range(3):
+                    if current_value == goal[goal_x][goal_y]:
+                        manhattan_distance += abs(i - goal_x) + abs(j - goal_y)
+    return manhattan_distance
 
-        
 
 if __name__ == "__main__":
     if len(sys.argv) != 4 and len(sys.argv) != 5 and len(sys.argv) != 3:
@@ -361,7 +413,7 @@ if __name__ == "__main__":
             start_file = sys.argv[1]
             goal_file = sys.argv[2]
             method = sys.argv[3]
-            dflag = sys.argv[len(sys.argv)-1]
+            dflag = sys.argv[len(sys.argv)-1]           #doing it this way because we will only have start, goal, method, flag (4 flags max)
         elif len(sys.argv) == 3:
             start_file = sys.argv[1]
             goal_file = sys.argv[2]
