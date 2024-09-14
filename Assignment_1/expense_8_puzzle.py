@@ -6,18 +6,6 @@ import datetime
 import copy
 from Node import node
 
-def main(method): #here using method to decide which search method to invoke
-    if method == "bfs":         #breadth first search
-        bfs(start, goal, dflag)
-    elif method == "ucs":       #uniform cost
-        ucs(start, goal, dflag)
-    elif method == "greedy":    #greedy search
-        greedy(start, goal, dflag)
-    elif method == "a*":        #A* search
-        a_star(start, goal, dflag)
-    else:                       #DEFAULT TO A*
-        a_star(start, goal, dflag)
-
 def bfs(start, goal, dflag): #bfs's fringe is a FIFO so i should try and implement a queue
     print("this is bfs")
     #for BFS i will start at whichever node is in [0,0]
@@ -448,5 +436,14 @@ if __name__ == "__main__":
         goal = np.vectorize(int)(goal)
         goal = np.array(goal)
 
-        main(method)
+        if method == "bfs":         #breadth first search
+            bfs(start, goal, dflag)
+        elif method == "ucs":       #uniform cost
+            ucs(start, goal, dflag)
+        elif method == "greedy":    #greedy search
+            greedy(start, goal, dflag)
+        elif method == "a*":        #A* search
+            a_star(start, goal, dflag)
+        else:                       #DEFAULT TO A*
+            a_star(start, goal, dflag)
     
