@@ -6,6 +6,8 @@ class node:
         this.heuristic = heuristic #will be used in greedy/A*, default is 0
 
         def __eq__(this, other):
-            return this.state == other.state
+            return (this.state, this.cost, this.heuristic) == (other.state, other.cost, other.heuristic)
         def __lt__(this, other):
-            return this.cost + this.heuristic < other.cost + other.heuristic #adding heuristic should not matter in bfs or ucs
+            return (this.cost + this.heuristic) < (other.cost + other.heuristic) #adding heuristic should not matter in bfs or ucs
+        def __hash__(this):
+            return hash((this.state, this.cost, this.heuristic))
