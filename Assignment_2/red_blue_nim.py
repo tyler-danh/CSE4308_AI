@@ -8,7 +8,8 @@ misere_moves = {"Pick 1 Blue" : 1, "Pick 1 Red" : 1, "Pick 2 Blue" : 2, "Pick 2 
 misere_list = ["Pick 1 Blue", "Pick 1 Red", "Pick 2 Blue", "Pick 2 Red"]
 
 def play_game(red_num, blue_num, version, first_player):
-    print(f"red: {red_num}  blue: {blue_num}")
+    # print(f"red: {red_num}  blue: {blue_num}")
+    marble_piles = [red_num, blue_num] #list to represent the 2 piles
     while True:
         if first_player == "computer":
             print("Computer goes first")
@@ -23,11 +24,25 @@ def play_game(red_num, blue_num, version, first_player):
                 move = standard_list[int(move_selection)-1]
                 print(standard_moves[move])
                 if (int(move_selection)-1) % 2 == 0: #in standard mode red pile is even, blue pile is odd
-                    red_num -= int(standard_moves[move])
-                    print(red_num)
+                    if marble_piles[0] - standard_moves[move] < 0:
+                        print(f"Invalid Move\nThere is only {marble_piles[0]} red left.")
+                        continue
+                    marble_piles[0] -= standard_moves[move]
+                    print(marble_piles)
                 else:
-                    blue_num -= int(standard_moves[move])
-                    print(blue_num)
+                    if marble_piles[1] - standard_moves[move] < 0:
+                        print(f"Invalid Move\nThere is only {marble_piles[1]} blue left.")
+                        continue
+                    marble_piles[1] -= standard_moves[move]
+                    print(marble_piles)
+                if marble_piles[0] == 0:
+                    score = marble_piles[1] * 3 #blue = 3 points
+                    print(f"red pile is empty\nscore: {score}")
+                    break
+                elif marble_piles[1] == 0:
+                    score = marble_piles[0] * 2 #red = 2 points
+                    print(f"blue pile is empty\nscore: {score}")
+                    break
 
             elif version == "misere":
                 print("Misere move list:")
@@ -37,19 +52,37 @@ def play_game(red_num, blue_num, version, first_player):
                 move = misere_list[int(move_selection)-1]
                 print(misere_moves[move])
                 if (int(move_selection)-1) % 2 == 0: #in misere mode blue pile is even, red pile is odd
-                    blue_num -= misere_moves[move]
-                    print(blue_num)
+                    if marble_piles[1] - misere_moves[move] < 0:
+                        print(f"Invalid Move\nThere is only {marble_piles[1]} blue left.")
+                        continue
+                    marble_piles[1] -= misere_moves[move]
+                    print(marble_piles)
                 else:
-                    red_num -= misere_moves[move]
-                    print(red_num)
+                    if marble_piles[1] - misere_moves[move] < 0:
+                        print(f"Invalid Move\nThere is only {marble_piles[0]} red left.")
+                        continue
+                    marble_piles[0] -= misere_moves[move]
+                    print(marble_piles)
+                if marble_piles[0] == 0:
+                    score = marble_piles[1] * 3 #blue = 3 points
+                    print(f"red pile is empty\nscore: {score}")
+                    break
+                elif marble_piles[1] == 0:
+                    score = marble_piles[0] * 2 #red = 2 points
+                    print(f"blue pile is empty\nscore: {score}")
+                    break
 
 
-        
-        
+def alpha_beta(state, first_player):
+    utility = max_value(state, -math.inf, math.inf)
+    return 0 #return the action to take? or the entire tree
 
-def alpha_beta():
-    alpha = -math.inf
-    beta = math.inf
+def max_value(state, alpha, beta):
+    
+    return 0
+
+def min_value(state, alpha, beta):
+
     return 0
 
 
