@@ -73,18 +73,66 @@ def play_game(red_num, blue_num, version, first_player):
                     break
 
 
-def alpha_beta(state, first_player):
-    utility = max_value(state, -math.inf, math.inf)
-    return 0 #return the action to take? or the entire tree
+def alpha_beta(marble_pile, first_player, mode): #marble_pile is state
+    if first_player == "computer":
+        utility = min_value(marble_pile, -math.inf, math.inf, mode)
+        return 0
+    else:
+        utility = max_value(marble_pile -math.inf, math.inf, mode)
+        return 0 #return the action to take? or the entire tree
 
-def max_value(state, alpha, beta):
-    
-    return 0
+def max_value(state, alpha, beta, mode):
+    if state[0] == 0:
+        return state[1] * 3
+    elif state[1] == 0:
+        return state[0] * 2
+    v = -math.inf
+    for action, states in generate_successors(state, mode):
+        v = max(v, min_value(state, alpha, beta, mode))
+        if v >= beta: 
+            return v
+        alpha = max(alpha, v)
+    return v
 
-def min_value(state, alpha, beta):
+def min_value(state, alpha, beta, mode):
+    if state[0] == 0:
+        return state[1] * 3
+    elif state[1] == 0:
+        return state[0] * 2
+    v = math.inf
+    for action, states in generate_successors(state, mode):
+        v = min(v, max_value(state, alpha, beta, mode))
+        if v <= alpha:
+            return v
+        beta = min(beta, v)
+    return v
 
-    return 0
-
+def generate_successors(state, mode):
+    red, blue = state
+    moves = []
+    if mode == "standard":
+        while red or blue != 0:
+            if red or blue < 0:
+                continue
+            for i in range(4):
+                if i %2 == 0:
+                    red -= standard_moves[i]
+                    moves.append(i)
+                else:
+                    blue -= standard_moves[i]    
+                    moves.append(i) 
+    if mode == "misere":
+        while red or blue != 0:
+            if red or blue < 0:
+                continue
+            for i in range(4):
+                if i %2 == 0:
+                    red -= misere_moves[i]
+                    moves.append(i)
+                else:
+                    blue -= misere_moves[i]    
+                    moves.append(i) 
+    return moves
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
